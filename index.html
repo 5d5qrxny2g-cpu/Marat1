@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мұрат Қабанбай «Бауыр» | Интерактивті сабақ</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #d4af37; /* Gold */
+            --secondary: #87ceeb; /* Sky Blue */
+            --bg-warm: #fdfbf7;
+            --text-main: #4a4a4a;
+            --glass: rgba(255, 255, 255, 0.7);
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-warm);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* National Pattern Background Decor */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/cream-pixels.png'); /* Subtle texture */
+            opacity: 0.5;
+            z-index: -2;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            position: fixed;
+            top: 0; width: 100%; height: 60px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 0 20px;
+        }
+
+        .steps {
+            display: flex;
+            gap: 15px;
+            max-width: 800px;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .step {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #ccc;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .step.active { color: var(--primary); }
+        .step.done { color: #4caf50; }
+
+        /* Hero Banner */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(rgba(253, 251, 247, 0.6), rgba(253, 251, 247, 0.6)), 
+                        url('https://images.unsplash.com/photo-1508898578281-774ac4893c0c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            padding: 20px;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 8vw, 5rem);
+            color: #2c3e50;
+            margin-bottom: 10px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease 0.2s backwards;
+        }
+
+        .btn-main {
+            padding: 18px 45px;
+            font-size: 1.2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-main:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Main Content Wrapper */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Video Section */
+        .video-section {
+            display: none;
+            animation: fadeIn 1s ease;
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            background: #000;
+            margin-bottom: 20px;
+        }
+
+        .video-wrapper iframe, .video-wrapper video {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border: none;
+        }
+
+        /* Tabs System */
+        .tabs-section {
+            display: none;
+            margin-top: 50px;
+        }
+
+        .tabs-header {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            scrollbar-width: none;
+        }
+
+        .tab-btn {
+            padding: 15px 25px;
+            background: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-weight: 600;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            padding: 40px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: var(--shadow);
+            animation: slideUp 0.5s ease;
+        }
+
+        .tab-content.active { display: block; }
+
+        /* Task Components */
+        .quiz-item { margin-bottom: 25px; }
+        .options { display: grid; gap: 10px; margin-top: 15px; }
+        .option-btn {
+            padding: 15px;
+            background: white;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: left;
+            transition: 0.3s;
+        }
+        .option-btn:hover { border-color: var(--secondary); }
+        .correct { background: #d4edda !important; border-color: #28a745 !important; }
+        .wrong { background: #f8d7da !important; border-color: #dc3545 !important; }
+
+        /* Matching Task */
+        .matching-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .match-box {
+            padding: 15px;
+            background: #fff;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 2px dashed #ccc;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+        }
+        .match-box.selected { border-color: var(--primary); background: #fffdf0; }
+
+        /* Results Screen */
+        .results-screen {
+            display: none;
+            text-align: center;
+            padding: 50px;
+        }
+        .stars { font-size: 3rem; color: #ffd700; margin: 20px 0; }
+        .percentage { font-size: 4rem; font-weight: 700; color: var(--primary); }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2.5rem; }
+            .tab-content { padding: 20px; }
+            .matching-container { grid-template-columns: 1fr; }
+        }
+
+        /* Custom Input */
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            margin-top: 10px;
+            font-family: inherit;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div class="steps">
+            <div class="step" id="step-video">Бейне</div>
+            <div class="step" id="step-1">Тапсырма 1</div>
+            <div class="step" id="step-2">Тапсырма 2</div>
+            <div class="step" id="step-3">Тапсырма 3</div>
+            <div class="step" id="step-4">Тапсырма 4</div>
+            <div class="step" id="step-5">Тапсырма 5</div>
+        </div>
+    </div>
+
+    <!-- Hero Banner -->
+    <section class="hero" id="hero">
+        <h1>Мұрат Қабанбай «Бауыр»</h1>
+        <p>Интерактивті сабақ</p>
+        <button class="btn-main" onclick="startLesson()">▶ Сабақты бастау</button>
+    </section>
+
+    <div class="container">
+        <!-- Video Section -->
+        <section class="video-section" id="video-section">
+            <div class="video-wrapper">
+                <!-- Замените URL на свое видео -->
+                <video controls style="width:100%;height:100%"><source src="video.mp4" type="video/mp4">Ваш браузер не поддерживает видео.</video>
+            </div>
+            <button class="btn-main" style="width: 100%;" onclick="requestFullScreen()">▶ Бейнені толық экранда қарау</button>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn-main" style="background: var(--secondary);" onclick="showTasks()">Тапсырмаларға көшу</button>
+            </div>
+        </section>
+
+        <!-- Tasks Section -->
+        <section class="tabs-section" id="tabs-section">
+            <div class="tabs-header">
+                <button class="tab-btn active" onclick="openTab(0)">📖 Тапсырма 1</button>
+                <button class="tab-btn" onclick="openTab(1)">🧠 Тапсырма 2</button>
+                <button class="tab-btn" onclick="openTab(2)">❤️ Тапсырма 3</button>
+                <button class="tab-btn" onclick="openTab(3)">🎯 Тапсырма 4</button>
+                <button class="tab-btn" onclick="openTab(4)">🏆 Қорытынды</button>
+            </div>
+
+            <!-- Task 1: Test -->
+            <div id="tab-0" class="tab-content active">
+                <h3>Тест: Шығарма мазмұны</h3>
+                <div id="test-container">
+                    <!-- Вопросы генерируются через JS -->
+                </div>
+            </div>
+
+            <!-- Task 2: Matching -->
+            <div id="tab-1" class="tab-content">
+                <h3>Кейіпкерлерді сипаттамасымен сәйкестендір</h3>
+                <div class="matching-container" id="matching-zone">
+                    <div>
+                        <div class="match-box" data-id="1" onclick="selectMatch(this, 'left')">Қали</div>
+                        <div class="match-box" data-id="2" onclick="selectMatch(this, 'left')" style="margin-top:10px">Манас</div>
+                    </div>
+                    <div>
+                        <div class="match-box" data-id="2" onclick="selectMatch(this, 'right')">Қаладан келген ағасы</div>
+                        <div class="match-box" data-id="1" onclick="selectMatch(this, 'right')" style="margin-top:10px">Интернатта оқитын бала</div>
+                    </div>
+                </div>
+                <div id="match-feedback" style="margin-top: 20px; font-weight: bold;"></div>
+            </div>
+
+            <!-- Task 3: Yes/No -->
+            <div id="tab-2" class="tab-content">
+                <h3>Иә немесе Жоқ</h3>
+                
+<div id="yes-no-container">
+<div class="quiz-item"><p>1. Оқиға соғыстан кейінгі жылдары болған ба?</p><div class="options">
+<button class="option-btn" onclick="checkYN(this,true)">Иә</button>
+<button class="option-btn" onclick="checkYN(this,false)">Жоқ</button>
+</div></div><div class="quiz-item"><p>2. Қали интернатта оқиды ма?</p><div class="options">
+<button class="option-btn" onclick="checkYN(this,true)">Иә</button>
+<button class="option-btn" onclick="checkYN(this,false)">Жоқ</button>
+</div></div><div class="quiz-item"><p>3. Манас Қалиды танымайды ма?</p><div class="options">
+<button class="option-btn" onclick="checkYN(this,false)">Иә</button>
+<button class="option-btn" onclick="checkYN(this,true)">Жоқ</button>
+</div></div><div class="quiz-item"><p>4. Әңгімеде бауырмалдық мәселесі көтеріле ме?</p><div class="options">
+<button class="option-btn" onclick="checkYN(this,true)">Иә</button>
+<button class="option-btn" onclick="checkYN(this,false)">Жоқ</button>
+</div></div><div class="quiz-item"><p>5. Шығарма ертегі жанрына жата ма?</p><div class="options">
+<button class="option-btn" onclick="checkYN(this,false)">Иә</button>
+<button class="option-btn" onclick="checkYN(this,true)">Жоқ</button>
+</div></div></div>
+            </div>
+                </div>
+            </div>
+
+            <!-- Task 4: Fill Blanks -->
+            <div id="tab-3" class="tab-content">
+                <h3>Сөйлемді толықтыр</h3>
+                <p>«Бауыр» әңгімесіндегі басты кейіпкер — <input type="text" id="blank-1" placeholder="...">.</p>
+                <button class="btn-main" style="margin-top: 20px;" onclick="checkBlanks()">Тексеру</button>
+                <div id="blank-feedback" style="margin-top:15px"></div>
+            </div>
+
+            <!-- Task 5: Open Question -->
+            <div id="tab-4" class="tab-content">
+                <h3>Шығармашылық жұмыс</h3>
+                <p>Бауырлар арасындағы сағыныш туралы өз ойыңызды жазыңыз:</p>
+                <textarea id="open-answer" rows="5" placeholder="Ойыңызды осында жазыңыз..."></textarea>
+                <button class="btn-main" style="margin-top: 20px;" onclick="finishLesson()">Сабақты аяқтау</button>
+                <p id="open-feedback" style="color: green; margin-top: 10px; display: none;">Жарайсың! Өз ойыңды жақсы жеткіздің.</p>
+            </div>
+        </section>
+
+        <!-- Final Results -->
+        <section class="results-screen" id="results-screen">
+            <div class="glass-card" style="background: white; padding: 40px; border-radius: 30px; box-shadow: var(--shadow);">
+                <h1>🎉 Құттықтаймыз!</h1>
+                <p>Сіз барлық тапсырманы орындадыңыз!</p>
+                <div class="percentage" id="final-score">0%</div>
+                <div class="stars" id="star-rating"></div>
+                <button class="btn-main" onclick="location.reload()">Қайта бастау</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Confetti Canvas -->
+    <canvas id="confetti" style="position: fixed; top: 0; left: 0; pointer-events: none; z-index: 2000;"></canvas>
+
+    <script>
+        // --- State ---
+        let score = 0;
+        let totalPossible = 11; // Adjust based on total questions
+        let currentTab = 0;
+
+        // --- Navigation ---
+        function startLesson() {
+            document.getElementById('hero').style.display = 'none';
+            document.getElementById('video-section').style.display = 'block';
+            document.getElementById('step-video').classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function showTasks() {
+            document.getElementById('video-section').style.display = 'none';
+            document.getElementById('tabs-section').style.display = 'block';
+            document.getElementById('step-video').classList.add('done');
+            document.getElementById('step-1').classList.add('active');
+        }
+
+        function openTab(index) {
+            const tabs = document.querySelectorAll('.tab-content');
+            const btns = document.querySelectorAll('.tab-btn');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            btns.forEach(b => b.classList.remove('active'));
+            
+            tabs[index].classList.add('active');
+            btns[index].classList.add('active');
+            
+            // Update progress bar
+            for(let i=1; i<=5; i++) {
+                let s = document.getElementById(`step-${i}`);
+                if(i < index + 1) s.classList.add('done');
+                if(i === index + 1) s.classList.add('active');
+            }
+        }
+
+        // --- Task 1: Test Logic ---
+        const testData = [
+{ q:"Шығарманың авторы кім?", a:["Мұрат Қабанбай","Сәбит Мұқанов","Бердібек Соқпақбаев"], correct:0, hint:"Дұрыс жауап — Мұрат Қабанбай."},
+{ q:"Басты кейіпкердің есімі кім?", a:["Қали","Арман","Серік"], correct:0, hint:"Басты кейіпкер — Қали."},
+{ q:"Қали қайда оқиды?", a:["Интернатта","Ауыл мектебінде","Колледжде"], correct:0, hint:"Қали интернатта оқиды."},
+{ q:"Әңгіменің негізгі тақырыбы қандай?", a:["Бауырмалдық","Спорт","Табиғат"], correct:0, hint:"Негізгі тақырып — бауырмалдық."},
+{ q:"Шығарма қандай сезімді көрсетеді?", a:["Сағыныш","Қорқыныш","Ашу"], correct:0, hint:"Шығармада сағыныш сезімі көрінеді."}
+];
+
+        function initTest() {
+            const container = document.getElementById('test-container');
+            testData.forEach((item, idx) => {
+                let div = document.createElement('div');
+                div.className = 'quiz-item';
+                div.innerHTML = `<p>${idx+1}. ${item.q}</p><div class="options" id="q${idx}"></div><p id="hint${idx}" style="display:none; margin-top:10px; font-size:0.9rem; color:#666"></p>`;
+                container.appendChild(div);
+                
+                item.a.forEach((opt, optIdx) => {
+                    let btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt;
+                    btn.onclick = () => checkTest(btn, idx, optIdx);
+                    document.getElementById(`q${idx}`).appendChild(btn);
+                });
+            });
+        }
+
+        function checkTest(btn, qIdx, optIdx) {
+            const parent = document.getElementById(`q${qIdx}`);
+            if(parent.classList.contains('answered')) return;
+            
+            parent.classList.add('answered');
+            if(optIdx === testData[qIdx].correct) {
+                btn.classList.add('correct');
+                btn.innerHTML += " ✅ Дұрыс жауап";
+                score++;
+            } else {
+                btn.classList.add('wrong');
+                btn.innerHTML += " ❌ Қате жауап";
+                let correctBtn = parent.querySelectorAll('.option-btn')[testData[qIdx].correct];
+                correctBtn.classList.add('correct');
+            }
+            let hint = document.getElementById(`hint${qIdx}`);
+            hint.innerText = testData[qIdx].hint;
+            hint.style.display = 'block';
+        }
+
+        // --- Task 2: Matching Logic ---
+        let selectedLeft = null;
+        function selectMatch(el, side) {
+            if(el.classList.contains('correct')) return;
+
+            if(side === 'left') {
+                document.querySelectorAll('#matching-zone .match-box').forEach(b => b.classList.remove('selected'));
+                el.classList.add('selected');
+                selectedLeft = el;
+            } else if(selectedLeft) {
+                if(selectedLeft.dataset.id === el.dataset.id) {
+                    el.classList.add('correct');
+                    selectedLeft.classList.add('correct');
+                    score++;
+                    selectedLeft = null;
+                } else {
+                    el.classList.add('wrong');
+                    setTimeout(() => el.classList.remove('wrong'), 500);
+                }
+            }
+        }
+
+        // --- Task 3: Yes/No Logic ---
+        function checkYN(btn,isCorrect){
+const p=btn.parentElement;
+if(p.classList.contains("answered")) return;
+p.classList.add("answered");
+if(isCorrect){btn.classList.add("correct");score++;}else{btn.classList.add("wrong");}
+}
+
+        // --- Task 4: Blanks ---
+        function checkBlanks() {
+            const val = document.getElementById('blank-1').value.toLowerCase().trim();
+            const feedback = document.getElementById('blank-feedback');
+            if(val === "қали" || val === "кали") {
+                feedback.innerHTML = "✅ Дұрыс!";
+                feedback.style.color = "green";
+                score++;
+            } else {
+                feedback.innerHTML = "❌ Дұрыс жауап: Қали";
+                feedback.style.color = "red";
+            }
+        }
+
+        // --- Final ---
+        function finishLesson() {
+            document.getElementById('open-feedback').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('tabs-section').style.display = 'none';
+                document.getElementById('results-screen').style.display = 'block';
+                
+                let percent = Math.round((score / totalPossible) * 100);
+                if(percent > 100) percent = 100;
+                
+                document.getElementById('final-score').innerText = percent + "%";
+                
+                let stars = "";
+                let count = percent > 90 ? 5 : percent > 70 ? 4 : 3;
+                for(let i=0; i<count; i++) stars += "⭐";
+                document.getElementById('star-rating').innerText = stars;
+                
+                if(percent > 70) startConfetti();
+            }, 1500);
+        }
+
+        // --- Utilities ---
+        function requestFullScreen() {
+            let el = document.querySelector('iframe');
+            if (el.requestFullscreen) el.requestFullscreen();
+            else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+        }
+
+        // --- Confetti Effect ---
+        function startConfetti() {
+            const canvas = document.getElementById('confetti');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            let particles = [];
+            for(let i=0; i<100; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    r: Math.random() * 6 + 2,
+                    d: Math.random() * 10,
+                    color: `hsl(${Math.random() * 360}, 70%, 50%)`,
+                    tilt: Math.random() * 10 - 10
+                });
+            }
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    ctx.beginPath();
+                    ctx.lineWidth = p.r;
+                    ctx.strokeStyle = p.color;
+                    ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+                    ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+                    ctx.stroke();
+                });
+                update();
+                requestAnimationFrame(draw);
+            }
+            function update() {
+                particles.forEach(p => {
+                    p.y += Math.cos(p.d) + 1 + p.r / 2;
+                    p.tilt = Math.sin(p.d) * 15;
+                    if(p.y > canvas.height) p.y = -20;
+                });
+            }
+            draw();
+        }
+
+        window.onload = initTest;
+    </script>
+</body>
+</html>
